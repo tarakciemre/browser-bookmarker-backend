@@ -93,7 +93,7 @@ app.get("/users", async (req, res) => {
 app.get("/user/:userId", async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
-    results = await getUser(userId);
+    const results = await getUser(userId);
     res.status(200).json(results);
   } catch (error) {
     console.error("Error getting users:", error);
@@ -137,7 +137,7 @@ async function getUser(userId) {
     const results = await connection.execute(query, [userId]);
     return results;
   } catch (error) {
-    console.error("Error getting al users:", error);
+    console.error("Error getting all users:", error);
     throw error;
   }
 }
