@@ -83,7 +83,7 @@ app.delete("/user/:userId", async (req, res) => {
 app.get("/users", async (req, res) => {
   try {
     const results = await getUsers();
-    res.status(200).json(results);
+    res.status(200).json(results.rows);
   } catch (error) {
     console.error("Error getting users:", error);
     res.status(500).send("Error getting users");
