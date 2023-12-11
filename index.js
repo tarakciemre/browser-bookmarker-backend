@@ -92,7 +92,7 @@ app.get("/users", async (req, res) => {
 
 app.get("/user/:userId", async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId = parseInt(req.params.userId);
     results = await getUser(userId);
     res.status(200).json(results.rows);
   } catch (error) {
