@@ -15,10 +15,15 @@ app.get("/insert", (req, res) => {
   res.status(200).json("Welcome, your app is working well");
 });
 
-app.get("/get", (req, res) => {
-  var results = getEntries();
-  console.log("Results: " + results);
-  res.status(200).send(results);
+app.get("/get", async (req, res) => {
+  try {
+    var results = await getEntries();
+    console.log("Results: ", results);
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error fetching entries:", error);
+    res.status(500).send("Error fetching entries");
+  }
 });
 
 app.listen(PORT, () => {
