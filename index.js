@@ -94,7 +94,7 @@ app.get("/user/:userId", async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
     results = await getUser(userId);
-    res.status(200).json(results.rows);
+    res.status(200).json(results);
   } catch (error) {
     console.error("Error getting users:", error);
     res.status(500).send("Error getting users");
