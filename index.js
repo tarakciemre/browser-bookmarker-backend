@@ -122,7 +122,7 @@ async function deleteUser(userId) {
 
 async function getUsers() {
   try {
-    const query = "SELECT * FROM user";
+    const query = "SELECT id, name FROM user";
     const results = await connection.execute(query);
     return results;
   } catch (error) {
