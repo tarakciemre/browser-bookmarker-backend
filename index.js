@@ -85,8 +85,8 @@ app.get("/users", async (req, res) => {
     const results = await getUsers();
     res.status(200).json(results.rows);
   } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).send("Error deleting user");
+    console.error("Error getting users:", error);
+    res.status(500).send("Error getting users");
   }
 });
 
