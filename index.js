@@ -90,6 +90,17 @@ app.get("/users", async (req, res) => {
   }
 });
 
+app.get("/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    results = await getUser(userId);
+    res.status(200).json(results.rows);
+  } catch (error) {
+    console.error("Error getting users:", error);
+    res.status(500).send("Error getting users");
+  }
+});
+
 async function createUser(name, password) {
   try {
     const query = "INSERT INTO user (name, password) VALUES (?, ?)";
@@ -116,6 +127,17 @@ async function deleteUser(userId) {
     await connection.execute(query, [userId]);
   } catch (error) {
     console.error("Error deleting user:", error);
+    throw error;
+  }
+}
+
+async function getUser(userId) {
+  try {
+    const query = "SELECT id, name FROM user WHERE id = ?";
+    const results = await connection.execute(query, [userId]);
+    return results;
+  } catch (error) {
+    console.error("Error getting al users:", error);
     throw error;
   }
 }
