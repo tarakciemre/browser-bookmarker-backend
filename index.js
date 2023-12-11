@@ -10,10 +10,8 @@ app.get("/bookmark/:id", async (req, res) => {
   try {
     const bookmarkId = req.params.id;
     const result = await getBookmarkById(bookmarkId);
-    console.log("Result: ", result);
-    res.status(200).json(result);
+    res.status(200).json(result.rows);
   } catch (error) {
-    console.error("Error fetching bookmark:", error);
     res.status(500).send("Error fetching bookmark");
   }
 });
@@ -22,9 +20,7 @@ app.post("/bookmark", async (req, res) => {
   try {
     const { url, userId } = req.body;
     await createBookmark(url, userId);
-    res.status(201).send("Bookmark created successfully");
   } catch (error) {
-    console.error("Error creating bookmark:", error);
     res.status(500).send("Error creating bookmark");
   }
 });
@@ -34,9 +30,7 @@ app.put("/bookmark/:id", async (req, res) => {
     const bookmarkId = req.params.id;
     const { url, userId } = req.body;
     await updateBookmark(bookmarkId, url, userId);
-    res.status(200).send("Bookmark updated successfully");
   } catch (error) {
-    console.error("Error updating bookmark:", error);
     res.status(500).send("Error updating bookmark");
   }
 });
@@ -45,10 +39,8 @@ app.get("/bookmarks/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
     const results = await getUserBookmarks(userId);
-    console.log("Results: ", results);
     res.status(200).json(results);
   } catch (error) {
-    console.error("Error fetching entries for user:", error);
     res.status(500).send("Error fetching entries");
   }
 });
@@ -59,10 +51,8 @@ async function getEntries() {
   try {
     const query = "SELECT * FROM test_table";
     result = await connection.execute(query);
-    console.log("Entry selected");
   } catch (error) {
     result = null;
-    console.error("Error selecting entry:", error);
   }
   return result;
 }
@@ -72,10 +62,8 @@ async function getUserBookmarks(userId) {
   try {
     const query = "SELECT * FROM bookmark WHERE userId = ?";
     const results = await connection.execute(query, [userId]);
-    console.log("Entries retrieved for user:", userId);
     return results;
   } catch (error) {
-    console.error("Error selecting entries:", error);
     return null;
   }
 }
