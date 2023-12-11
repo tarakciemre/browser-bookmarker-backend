@@ -80,6 +80,16 @@ app.delete("/user/:userId", async (req, res) => {
   }
 });
 
+app.get("/users", async (req, res) => {
+  try {
+    const results = await getUsers();
+    res.status(200).json(results.rows);
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).send("Error deleting user");
+  }
+});
+
 async function createUser(name, password) {
   try {
     const query = "INSERT INTO user (name, password) VALUES (?, ?)";
@@ -106,6 +116,16 @@ async function deleteUser(userId) {
     await connection.execute(query, [userId]);
   } catch (error) {
     console.error("Error deleting user:", error);
+    throw error;
+  }
+}
+
+async function getUsers() {
+  try {
+    const query = "SELECT * FROM user";
+    await connection.execute(query);
+  } catch (error) {
+    console.error("Error getting al users:", error);
     throw error;
   }
 }
