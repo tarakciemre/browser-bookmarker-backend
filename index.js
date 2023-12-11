@@ -17,6 +17,7 @@ app.get("/insert", (req, res) => {
 
 app.get("/get", (req, res) => {
   var results = getEntries();
+  console.log("Results: " + results);
   res.status(200).send(results);
 });
 
