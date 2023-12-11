@@ -4,6 +4,7 @@ import { connect } from "@planetscale/database";
 import express from "express";
 
 const app = express();
+app.use(express.json());
 const PORT = 4000;
 
 app.get("/bookmark/:id", async (req, res) => {
@@ -39,11 +40,75 @@ app.get("/bookmarks/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
     const results = await getUserBookmarks(userId);
-    res.status(200).json(results);
+    res.status(200).json(results.rows);
   } catch (error) {
     res.status(500).send("Error fetching entries");
   }
 });
+
+app.post("/user", async (req, res) => {
+  try {
+    const { name, password } = req.body;
+    await createUser(name, password);
+    res.status(201).send("User created successfully");
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).send("Error creating user");
+  }
+});
+
+app.put("/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { name, password } = req.body;
+    await updateUser(userId, name, password);
+    res.status(200).send("User updated successfully");
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).send("Error updating user");
+  }
+});
+
+app.delete("/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    await deleteUser(userId);
+    res.status(200).send("User deleted successfully");
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).send("Error deleting user");
+  }
+});
+
+async function createUser(name, password) {
+  try {
+    const query = "INSERT INTO user (name, password) VALUES (?, ?)";
+    await connection.execute(query, [name, password]);
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+}
+
+async function updateUser(userId, name, password) {
+  try {
+    const query = "UPDATE user SET name = ?, password = ? WHERE id = ?";
+    await connection.execute(query, [name, password, userId]);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+}
+
+async function deleteUser(userId) {
+  try {
+    const query = "DELETE FROM user WHERE id = ?";
+    await connection.execute(query, [userId]);
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+}
 
 // Function to insert an entry
 async function getEntries() {
