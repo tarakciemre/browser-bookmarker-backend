@@ -83,7 +83,7 @@ app.delete("/user/:userId", async (req, res) => {
 app.get("/users", async (req, res) => {
   try {
     const results = await getUsers();
-    res.status(200).json(results.rows);
+    res.status(200).json(results);
   } catch (error) {
     console.error("Error getting users:", error);
     res.status(500).send("Error getting users");
@@ -123,23 +123,12 @@ async function deleteUser(userId) {
 async function getUsers() {
   try {
     const query = "SELECT * FROM user";
-    await connection.execute(query);
+    const results = await connection.execute(query);
+    return results;
   } catch (error) {
     console.error("Error getting al users:", error);
     throw error;
   }
-}
-
-// Function to insert an entry
-async function getEntries() {
-  var result;
-  try {
-    const query = "SELECT * FROM test_table";
-    result = await connection.execute(query);
-  } catch (error) {
-    result = null;
-  }
-  return result;
 }
 
 // Function to get entries for a specific user
