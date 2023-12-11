@@ -61,5 +61,5 @@ async function initializeAndTestDatabase() {
 initializeAndTestDatabase();
 
 // Export the Express API
-module.exports = app;
+export default app;
 
