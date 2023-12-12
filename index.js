@@ -1,13 +1,39 @@
 // index.js
-
-import { connect } from "@planetscale/database";
 import express from "express";
+import {
+  getUserBookmarks,
+  getBookmarkById,
+  createBookmark,
+  updateBookmark,
+} from "./Database/bookmark";
+import {
+  createUser,
+  updateUser,
+  deleteUser,
+  getUser,
+  getUsers,
+} from "./Database/user";
+import {
+  checkToken
+} from "./Database/login"
 
 const app = express();
 app.use(express.json());
 const PORT = 4000;
 
-app.get("/bookmark/:id", async (req, res) => {
+async function verifyToken(req, res, next) {
+  const token = req.headers.authorization;
+  const isValid = await checkToken(token);
+  if (isValid) {
+    next();
+  } else {
+    res.status(401).send('Unauthorized');
+  }
+}
+
+// BOOKMARK ROUTES
+
+app.get("/bookmark/:id", verifyToken, async (req, res) => {
   try {
     const bookmarkId = req.params.id;
     const result = await getBookmarkById(bookmarkId);
@@ -17,7 +43,7 @@ app.get("/bookmark/:id", async (req, res) => {
   }
 });
 
-app.post("/bookmark", async (req, res) => {
+app.post("/bookmark", verifyToken, async (req, res) => {
   try {
     const { url, userId } = req.body;
     await createBookmark(url, userId);
@@ -26,7 +52,7 @@ app.post("/bookmark", async (req, res) => {
   }
 });
 
-app.put("/bookmark/:id", async (req, res) => {
+app.put("/bookmark/:id", verifyToken, async (req, res) => {
   try {
     const bookmarkId = req.params.id;
     const { url, userId } = req.body;
@@ -36,7 +62,7 @@ app.put("/bookmark/:id", async (req, res) => {
   }
 });
 
-app.get("/bookmarks/:userId", async (req, res) => {
+app.get("/bookmarks/:userId", verifyToken, async (req, res) => {
   try {
     const userId = req.params.userId;
     const results = await getUserBookmarks(userId);
@@ -46,7 +72,8 @@ app.get("/bookmarks/:userId", async (req, res) => {
   }
 });
 
-app.post("/user", async (req, res) => {
+// USER ROUTES
+app.post("/user", verifyToken, async (req, res) => {
   try {
     const { name, password } = req.body;
     await createUser(name, password);
@@ -57,7 +84,7 @@ app.post("/user", async (req, res) => {
   }
 });
 
-app.put("/user/:userId", async (req, res) => {
+app.put("/user/:userId", verifyToken, async (req, res) => {
   try {
     const userId = req.params.userId;
     const { name, password } = req.body;
@@ -69,7 +96,7 @@ app.put("/user/:userId", async (req, res) => {
   }
 });
 
-app.delete("/user/:userId", async (req, res) => {
+app.delete("/user/:userId", verifyToken, async (req, res) => {
   try {
     const userId = req.params.userId;
     await deleteUser(userId);
@@ -80,7 +107,7 @@ app.delete("/user/:userId", async (req, res) => {
   }
 });
 
-app.get("/users", async (req, res) => {
+app.get("/users", verifyToken, async (req, res) => {
   try {
     const results = await getUsers();
     res.status(200).json(results.rows);
@@ -90,7 +117,7 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.get("/user/:userId", async (req, res) => {
+app.get("/user/:userId", verifyToken, async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
     const results = await getUser(userId);
@@ -101,121 +128,21 @@ app.get("/user/:userId", async (req, res) => {
   }
 });
 
-async function createUser(name, password) {
-  try {
-    const query = "INSERT INTO user (name, password) VALUES (?, ?)";
-    await connection.execute(query, [name, password]);
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw error;
-  }
-}
+// LOGIN ROUTES
 
-async function updateUser(userId, name, password) {
+app.get("/loginuserId", verifyToken, async (req, res) => {
   try {
-    const query = "UPDATE user SET name = ?, password = ? WHERE id = ?";
-    await connection.execute(query, [name, password, userId]);
+    const { name, password } = req.body;
+    const result = await res.status(200).json(results.rows);
   } catch (error) {
-    console.error("Error updating user:", error);
-    throw error;
+    console.error("Error getting users:", error);
+    res.status(500).send("Error getting users");
   }
-}
-
-async function deleteUser(userId) {
-  try {
-    const query = "DELETE FROM user WHERE id = ?";
-    await connection.execute(query, [userId]);
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    throw error;
-  }
-}
-
-async function getUser(userId) {
-  try {
-    const query = "SELECT id, name FROM user WHERE id = ?";
-    const results = await connection.execute(query, [userId]);
-    return results;
-  } catch (error) {
-    console.error("Error getting all users:", error);
-    throw error;
-  }
-}
-
-async function getUsers() {
-  try {
-    const query = "SELECT id, name FROM user";
-    const results = await connection.execute(query);
-    return results;
-  } catch (error) {
-    console.error("Error getting al users:", error);
-    throw error;
-  }
-}
-
-// Function to get entries for a specific user
-async function getUserBookmarks(userId) {
-  try {
-    const query = "SELECT * FROM bookmark WHERE userId = ?";
-    const results = await connection.execute(query, [userId]);
-    return results;
-  } catch (error) {
-    return null;
-  }
-}
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-
-// Create the connection
-const connection = connect({
-  host: process.env.DATABASE_HOST,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-});
-
-async function getBookmarkById(bookmarkId) {
-  try {
-    const query = "SELECT * FROM bookmark WHERE id = ?";
-    const results = await connection.execute(query, [bookmarkId]);
-    return results;
-  } catch (error) {
-    console.error("Error selecting bookmark:", error);
-    return null;
-  }
-}
-
-async function createBookmark(url, userId) {
-  try {
-    const query = "INSERT INTO bookmark (url, userId) VALUES (?, ?)";
-    await connection.execute(query, [url, userId]);
-  } catch (error) {
-    console.error("Error creating bookmark:", error);
-    throw error;
-  }
-}
-
-async function updateBookmark(bookmarkId, url, userId) {
-  try {
-    const query = "UPDATE bookmark SET url = ?, userId = ? WHERE id = ?";
-    await connection.execute(query, [url, userId, bookmarkId]);
-  } catch (error) {
-    console.error("Error updating bookmark:", error);
-    throw error;
-  }
-}
-
-// Function to insert an entry
-async function insertEntry() {
-  try {
-    const query = "INSERT INTO test_table (name) VALUES (?)";
-    await connection.execute(query, ["Test Name"]);
-    console.log("Entry inserted successfully");
-  } catch (error) {
-    console.error("Error inserting entry:", error);
-  }
-}
 
 // Export the Express API
 export default app;

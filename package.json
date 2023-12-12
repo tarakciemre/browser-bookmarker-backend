@@ -20,7 +20,9 @@
   "homepage": "https://github.com/tarakciemre/browser-bookmarker-backend#readme",
   "dependencies": {
     "@planetscale/database": "^1.11.0",
+    "bcrypt": "^5.1.1",
     "drizzle-orm": "^0.29.1",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "uuid": "^9.0.1"
   }
 }
