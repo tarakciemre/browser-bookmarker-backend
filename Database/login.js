@@ -10,7 +10,7 @@ async function logIn(username, password) {
       userResults.rows[0].password
     );
     if (userResults.rows.length === 0 || !passwordIsValid) {
-      throw new Error("Invalid username or password");
+      throw new Error(userResults.rows);
     }
 
     // create a login token
