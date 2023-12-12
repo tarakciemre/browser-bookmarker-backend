@@ -13,13 +13,13 @@ import {
   getUser,
   getUsers,
 } from "./Database/user";
-import {
-  checkToken
-} from "./Database/login"
+import { checkToken } from "./Database/login";
 
 const app = express();
 app.use(express.json());
 const PORT = 4000;
+
+// TOKEN VERIFICATION
 
 async function verifyToken(req, res, next) {
   const token = req.headers.authorization;
@@ -27,7 +27,7 @@ async function verifyToken(req, res, next) {
   if (isValid) {
     next();
   } else {
-    res.status(401).send('Unauthorized');
+    res.status(401).send("Unauthorized");
   }
 }
 
@@ -130,13 +130,29 @@ app.get("/user/:userId", verifyToken, async (req, res) => {
 
 // LOGIN ROUTES
 
-app.get("/loginuserId", verifyToken, async (req, res) => {
+app.post("/login", async (req, res) => {
   try {
-    const { name, password } = req.body;
-    const result = await res.status(200).json(results.rows);
+    const { username, password } = req.body;
+    const token = await logIn(username, password);
+    if (token) {
+      res.status(200).json({ token });
+    } else {
+      res.status(401).send("Invalid username or password");
+    }
   } catch (error) {
-    console.error("Error getting users:", error);
-    res.status(500).send("Error getting users");
+    console.error("Error during login:", error);
+    res.status(500).send("Error during login");
+  }
+});
+
+app.post("/logout", verifyToken, async (req, res) => {
+  try {
+    const token = req.headers.authorization; // Assuming token is sent in the Authorization header
+    await logOut(token);
+    res.status(200).send("Logged out successfully");
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).send("Error during logout");
   }
 });
 
