@@ -15,9 +15,15 @@ import {
   getUsers,
 } from "./Database/user.js";
 import { checkToken, logIn, logOut } from "./Database/login.js";
+import cors from "cors";
+
+const corsOptions = {
+  origin: "*",
+};
 
 const app = express();
 app.use(express.json());
+app.use(cors(corsOptions));
 const PORT = 4000;
 
 // TOKEN VERIFICATION
