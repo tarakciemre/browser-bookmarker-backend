@@ -17,7 +17,7 @@ export async function requestFromOpenAi(url) {
         content:
           "Determine the category of the provided website with url: " +
           url +
-          " and offer 3 similar websites with the same category." +
+          " and offer 3 similar websites with the same category in the format 'https?://(continue)'." +
           "Response format should be: category: <category>, similar websites: <website1>, <website2>, <website3>.",
       },
     ],
