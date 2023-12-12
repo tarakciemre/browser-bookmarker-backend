@@ -1,14 +1,15 @@
-import db from "./database.js";
-import { encrypt, checkLogin } from "../Utils/encryption.js";
+import { db } from "./database";
+import { encrypt, checkLogin } from "../Utils/encryption";
 
 async function logIn(username, password) {
   try {
     const userQuery = "SELECT username, password FROM user WHERE username = ?";
     const userResults = await db.execute(userQuery, [username]);
-    if (
-      userResults.rows.length === 0 ||
-      !checkLogin(password, userResults.rows[0].password)
-    ) {
+    const passwordIsValid = await checkLogin(
+      password,
+      userResults.rows[0].password
+    );
+    if (userResults.rows.length === 0 || !passwordIsValid) {
       throw new Error("Invalid username or password");
     }
 

@@ -4,7 +4,7 @@ import { encrypt } from "../Utils/encryption.js";
 async function createUser(username, password) {
   try {
     const query = "INSERT INTO user (username, password) VALUES (?, ?)";
-    const hashedPassword = encrypt(password);
+    const hashedPassword = await encrypt(password);
     await db.execute(query, [username, hashedPassword]);
   } catch (error) {
     console.error("Error creating user:", error);
@@ -15,7 +15,7 @@ async function createUser(username, password) {
 async function updateUser(username, password) {
   try {
     const query = "UPDATE user SET password = ? WHERE username = ?";
-    const hashedPassword = encrypt(password);
+    const hashedPassword = await encrypt(password);
     await db.execute(query, [hashedPassword, username]);
   } catch (error) {
     console.error("Error updating user:", error);
