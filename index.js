@@ -16,6 +16,7 @@ import {
 } from "./Database/user.js";
 import { checkToken, logIn, logOut } from "./Database/login.js";
 import cors from "cors";
+import { requestFromOpenAi } from "./Utils/recommendation.js";
 
 const corsOptions = {
   origin: "*",
@@ -185,6 +186,21 @@ app.post("/logout", verifyToken, async (req, res) => {
   } catch (error) {
     console.error("Error during logout:", error);
     res.status(500).send("Error during logout");
+  }
+});
+
+// OPEN AI API ROUTE
+
+app.get("/recommendation", verifyToken, async (req, res) => {
+  try {
+    const { url } = req.body;
+    console.log(url);
+    const result = await requestFromOpenAi(url);
+    console.log(result);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).send("Error getting recommendations");
   }
 });
 
