@@ -5,15 +5,15 @@ import {
   getBookmarkById,
   createBookmark,
   updateBookmark,
-} from "./Database/bookmark";
+} from "./Database/bookmark.js";
 import {
   createUser,
   updateUser,
   deleteUser,
   getUser,
   getUsers,
-} from "./Database/user";
-import { checkToken } from "./Database/login";
+} from "./Database/user.js";
+import { checkToken } from "./Database/login.js";
 
 const app = express();
 app.use(express.json());

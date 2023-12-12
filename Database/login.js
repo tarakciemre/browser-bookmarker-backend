@@ -1,5 +1,5 @@
-import { db } from "./database";
-import { encrypt, checkLogin } from "../Utils/encryption";
+import db from "./database.js";
+import { encrypt, checkLogin } from "../Utils/encryption.js";
 
 async function logIn(username, password) {
   try {
