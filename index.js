@@ -13,7 +13,7 @@ import {
   getUser,
   getUsers,
 } from "./Database/user.js";
-import { checkToken } from "./Database/login.js";
+import { checkToken, logIn, logOut } from "./Database/login.js";
 
 const app = express();
 app.use(express.json());
