@@ -191,7 +191,7 @@ app.post("/logout", verifyToken, async (req, res) => {
 
 // OPEN AI API ROUTE
 
-app.get("/recommendation", verifyToken, async (req, res) => {
+app.post("/recommendation", verifyToken, async (req, res) => {
   try {
     const { url } = req.body;
     console.log(url);
