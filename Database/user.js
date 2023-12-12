@@ -3,7 +3,7 @@ import { encrypt } from "../Utils/encryption.js";
 
 async function createUser(name, username, password) {
   try {
-    if (length(name) < 1 || length(username) < 1 || length(password) < 1) {
+    if (name.length < 1 || username.length < 1 || password.length < 1) {
       throw new Error("Name, username, or password cannot be empty.");
     }
     const query =
