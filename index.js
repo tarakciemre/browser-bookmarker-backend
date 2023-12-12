@@ -75,8 +75,8 @@ app.get("/bookmarks/:username", verifyToken, async (req, res) => {
 // USER ROUTES
 app.post("/user", async (req, res) => {
   try {
-    const { username, password } = req.body;
-    await createUser(username, password);
+    const { name, username, password } = req.body;
+    await createUser(name, username, password);
     res.status(201).send("User created successfully");
   } catch (error) {
     console.error("Error creating user:", error);

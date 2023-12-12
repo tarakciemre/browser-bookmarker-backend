@@ -1,22 +1,22 @@
 import db from "./database.js";
 import { encrypt } from "../Utils/encryption.js";
 
-async function createUser(username, password) {
+async function createUser(name, username, password) {
   try {
-    const query = "INSERT INTO user (username, password) VALUES (?, ?)";
+    const query = "INSERT INTO user (name, username, password) VALUES (?, ?, ?)";
     const hashedPassword = await encrypt(password);
-    await db.execute(query, [username, hashedPassword]);
+    await db.execute(query, [name, username, hashedPassword]);
   } catch (error) {
     console.error("Error creating user:", error);
     throw error;
   }
 }
 
-async function updateUser(username, password) {
+async function updateUser(name, username, password) {
   try {
-    const query = "UPDATE user SET password = ? WHERE username = ?";
+    const query = "UPDATE user SET name = ?, password = ? WHERE username = ?";
     const hashedPassword = await encrypt(password);
-    await db.execute(query, [hashedPassword, username]);
+    await db.execute(query, [name, hashedPassword, username]);
   } catch (error) {
     console.error("Error updating user:", error);
     throw error;
@@ -35,7 +35,7 @@ async function deleteUser(username) {
 
 async function getUser(username) {
   try {
-    const query = "SELECT username FROM user WHERE username = ?";
+    const query = "SELECT name, username FROM user WHERE username = ?";
     const results = await db.execute(query, [username]);
     return results;
   } catch (error) {
@@ -46,7 +46,7 @@ async function getUser(username) {
 
 async function getUsers() {
   try {
-    const query = "SELECT username FROM user";
+    const query = "SELECT name, username FROM user";
     const results = await db.execute(query);
     return results;
   } catch (error) {
