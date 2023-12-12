@@ -1,9 +1,9 @@
 import db from "./database.js";
 
-async function getUserBookmarks(userId) {
+async function getUserBookmarks(username) {
   try {
-    const query = "SELECT * FROM bookmark WHERE userId = ?";
-    const results = await db.execute(query, [userId]);
+    const query = "SELECT * FROM bookmark WHERE username = ?";
+    const results = await db.execute(query, [username]);
     return results;
   } catch (error) {
     return null;
@@ -21,20 +21,20 @@ async function getBookmarkById(bookmarkId) {
   }
 }
 
-async function createBookmark(url, userId) {
+async function createBookmark(url, username) {
   try {
-    const query = "INSERT INTO bookmark (url, userId) VALUES (?, ?)";
-    await db.execute(query, [url, userId]);
+    const query = "INSERT INTO bookmark (url, username) VALUES (?, ?)";
+    await db.execute(query, [url, username]);
   } catch (error) {
     console.error("Error creating bookmark:", error);
     throw error;
   }
 }
 
-async function updateBookmark(bookmarkId, url, userId) {
+async function updateBookmark(bookmarkId, url, username) {
   try {
-    const query = "UPDATE bookmark SET url = ?, userId = ? WHERE id = ?";
-    await db.execute(query, [url, userId, bookmarkId]);
+    const query = "UPDATE bookmark SET url = ?, username = ? WHERE id = ?";
+    await db.execute(query, [url, username, bookmarkId]);
   } catch (error) {
     console.error("Error updating bookmark:", error);
     throw error;
