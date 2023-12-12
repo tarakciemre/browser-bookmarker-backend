@@ -107,7 +107,7 @@ app.delete("/user/:userId", verifyToken, async (req, res) => {
   }
 });
 
-app.get("/users", verifyToken, async (req, res) => {
+app.get("/users", async (req, res) => {
   try {
     const results = await getUsers();
     res.status(200).json(results.rows);
