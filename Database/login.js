@@ -1,5 +1,6 @@
 import db from "./database.js";
 import { encrypt, checkLogin } from "../Utils/encryption.js";
+import { v4 as uuidv4 } from "uuid";
 
 async function logIn(username, password) {
   try {

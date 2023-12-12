@@ -21,6 +21,17 @@ async function getBookmarkById(bookmarkId) {
   }
 }
 
+async function deleteBookmarkById(bookmarkId) {
+  try {
+    const query = "DELETE FROM bookmark WHERE id = ?";
+    const results = await db.execute(query, [bookmarkId]);
+    return results;
+  } catch (error) {
+    console.error("Error deleting bookmark:", error);
+    return null;
+  }
+}
+
 async function createBookmark(url, username) {
   try {
     const query = "INSERT INTO bookmark (url, username) VALUES (?, ?)";
@@ -41,4 +52,10 @@ async function updateBookmark(bookmarkId, url, username) {
   }
 }
 
-export { getUserBookmarks, getBookmarkById, createBookmark, updateBookmark };
+export {
+  deleteBookmarkById,
+  getUserBookmarks,
+  getBookmarkById,
+  createBookmark,
+  updateBookmark,
+};

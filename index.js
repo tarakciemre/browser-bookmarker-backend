@@ -3,6 +3,7 @@ import express from "express";
 import {
   getUserBookmarks,
   getBookmarkById,
+  deleteBookmarkById,
   createBookmark,
   updateBookmark,
 } from "./Database/bookmark.js";
@@ -23,11 +24,24 @@ const PORT = 4000;
 
 async function verifyToken(req, res, next) {
   const token = req.headers.authorization;
-  const isValid = await checkToken(token);
-  if (isValid) {
-    next();
+  if (token) {
+    const tokenParts = token.split(" ");
+    if (tokenParts.length === 2 && tokenParts[0] === "Bearer") {
+      const actualToken = tokenParts[1];
+      console.log(actualToken);
+      const isValid = await checkToken(actualToken);
+      if (isValid) {
+        next();
+      } else {
+        res.status(401).send("Unauthorized");
+      }
+    } else {
+      // Handle invalid authorization header
+      res.status(401).send("Invalid authorization header");
+    }
   } else {
-    res.status(401).send("Unauthorized");
+    // Handle missing authorization header
+    res.status(401).send("Authorization header missing");
   }
 }
 
@@ -43,10 +57,21 @@ app.get("/bookmark/:id", verifyToken, async (req, res) => {
   }
 });
 
+app.delete("/bookmark/:id", verifyToken, async (req, res) => {
+  try {
+    const bookmarkId = req.params.id;
+    const result = await deleteBookmarkById(bookmarkId);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    res.status(500).send("Error fetching bookmark");
+  }
+});
+
 app.post("/bookmark", verifyToken, async (req, res) => {
   try {
     const { url, username } = req.body;
     await createBookmark(url, username);
+    res.status(200).send("Successfully created bookmark");
   } catch (error) {
     res.status(500).send("Error creating bookmark");
   }
@@ -57,6 +82,7 @@ app.put("/bookmark/:id", verifyToken, async (req, res) => {
     const bookmarkId = req.params.id;
     const { url, username } = req.body;
     await updateBookmark(bookmarkId, url, username);
+    res.status(200).send("Successfully updated bookmark");
   } catch (error) {
     res.status(500).send("Error updating bookmark");
   }
@@ -119,7 +145,7 @@ app.get("/users", async (req, res) => {
 
 app.get("/user/:username", verifyToken, async (req, res) => {
   try {
-    const username = parseInt(req.params.username);
+    const username = req.params.username;
     const results = await getUser(username);
     res.status(200).json(results.rows);
   } catch (error) {
