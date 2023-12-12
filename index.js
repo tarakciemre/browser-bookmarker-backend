@@ -45,8 +45,8 @@ app.get("/bookmark/:id", verifyToken, async (req, res) => {
 
 app.post("/bookmark", verifyToken, async (req, res) => {
   try {
-    const { url, userId } = req.body;
-    await createBookmark(url, userId);
+    const { url, username } = req.body;
+    await createBookmark(url, username);
   } catch (error) {
     res.status(500).send("Error creating bookmark");
   }
@@ -55,17 +55,17 @@ app.post("/bookmark", verifyToken, async (req, res) => {
 app.put("/bookmark/:id", verifyToken, async (req, res) => {
   try {
     const bookmarkId = req.params.id;
-    const { url, userId } = req.body;
-    await updateBookmark(bookmarkId, url, userId);
+    const { url, username } = req.body;
+    await updateBookmark(bookmarkId, url, username);
   } catch (error) {
     res.status(500).send("Error updating bookmark");
   }
 });
 
-app.get("/bookmarks/:userId", verifyToken, async (req, res) => {
+app.get("/bookmarks/:username", verifyToken, async (req, res) => {
   try {
-    const userId = req.params.userId;
-    const results = await getUserBookmarks(userId);
+    const username = req.params.username;
+    const results = await getUserBookmarks(username);
     res.status(200).json(results.rows);
   } catch (error) {
     res.status(500).send("Error fetching entries");
@@ -84,11 +84,11 @@ app.post("/user", async (req, res) => {
   }
 });
 
-app.put("/user/:userId", verifyToken, async (req, res) => {
+app.put("/user/:username", verifyToken, async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const username = req.params.username;
     const { name, password } = req.body;
-    await updateUser(userId, name, password);
+    await updateUser(username, name, password);
     res.status(200).send("User updated successfully");
   } catch (error) {
     console.error("Error updating user:", error);
@@ -96,10 +96,10 @@ app.put("/user/:userId", verifyToken, async (req, res) => {
   }
 });
 
-app.delete("/user/:userId", verifyToken, async (req, res) => {
+app.delete("/user/:username", verifyToken, async (req, res) => {
   try {
-    const userId = req.params.userId;
-    await deleteUser(userId);
+    const username = req.params.username;
+    await deleteUser(username);
     res.status(200).send("User deleted successfully");
   } catch (error) {
     console.error("Error deleting user:", error);
@@ -117,10 +117,10 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.get("/user/:userId", verifyToken, async (req, res) => {
+app.get("/user/:username", verifyToken, async (req, res) => {
   try {
-    const userId = parseInt(req.params.userId);
-    const results = await getUser(userId);
+    const username = parseInt(req.params.username);
+    const results = await getUser(username);
     res.status(200).json(results.rows);
   } catch (error) {
     console.error("Error getting users:", error);
